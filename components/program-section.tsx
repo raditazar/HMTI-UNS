@@ -97,7 +97,7 @@ export default function ProgramSection() {
                       </p>
                     </div>
                     <a
-                      href="/proker"
+                      href="/proker/divisi"
                       className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 whitespace-nowrap"
                     >
                       <span>Lihat Semua</span>

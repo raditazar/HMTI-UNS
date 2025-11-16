@@ -37,10 +37,10 @@ export default function Navigation() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md ${
         isScrolled
-          ? 'bg-background/95 backdrop-blur-md shadow-md'
-          : 'bg-transparent'
+          ? 'shadow-lg shadow-[#001d3d]/10'
+          : 'shadow-md shadow-[#001d3d]/5'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -57,8 +57,8 @@ export default function Navigation() {
               />
             </div>
             <div className="hidden md:block">
-              <div className="font-bold text-lg text-foreground">HMTI UNS</div>
-              <div className="text-xs text-muted-foreground">Teknik Industri</div>
+              <div className="font-bold text-lg text-[#001d3d]">HMTI UNS</div>
+              <div className="text-xs text-[#001d3d]/70">Teknik Industri</div>
             </div>
           </Link>
 
@@ -68,24 +68,24 @@ export default function Navigation() {
               link.dropdown ? (
                 <div 
                   key={link.label}
-                  className="relative"
+                  className="relative group"
                   onMouseEnter={() => setShowProkerDropdown(true)}
                   onMouseLeave={() => setShowProkerDropdown(false)}
                 >
-                  <button className="text-foreground/80 hover:text-primary font-medium transition-colors flex items-center gap-1">
+                  <button className="text-[#001d3d]/80 hover:text-[#003d7a] font-medium transition-colors flex items-center gap-1 relative group/btn">
                     {link.label}
                     <ChevronDown className={`h-4 w-4 transition-transform ${showProkerDropdown ? 'rotate-180' : ''}`} />
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-[#003d7a] to-[#1a7aa0] transition-all group-hover/btn:w-full" />
                   </button>
                   
-                  {/* FIX: Tambah padding dan z-index tinggi */}
                   {showProkerDropdown && (
                     <div className="absolute top-full left-0 pt-2 z-50">
-                      <div className="w-48 bg-background/95 backdrop-blur-md rounded-lg shadow-xl border border-border overflow-hidden">
+                      <div className="w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border-2 border-[#003d7a]/10 overflow-hidden">
                         {link.dropdown.map((item) => (
                           <Link
                             key={item.href}
                             href={item.href}
-                            className="block px-4 py-3 text-foreground/80 hover:bg-primary/10 hover:text-primary transition-colors"
+                            className="block px-4 py-3 text-[#001d3d]/80 hover:bg-gradient-to-r hover:from-[#003d7a]/10 hover:to-[#1a7aa0]/10 hover:text-[#001d3d] transition-all border-l-2 border-transparent hover:border-[#003d7a]"
                             onClick={() => setShowProkerDropdown(false)}
                           >
                             {item.label}
@@ -99,10 +99,10 @@ export default function Navigation() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-foreground/80 hover:text-primary font-medium transition-colors relative group"
+                  className="text-[#001d3d]/80 hover:text-[#003d7a] font-medium transition-colors relative group"
                 >
                   {link.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-[#003d7a] to-[#1a7aa0] transition-all group-hover:w-full" />
                 </Link>
               )
             ))}
@@ -110,17 +110,29 @@ export default function Navigation() {
             {user ? (
               <div className="flex items-center gap-4">
                 <Link href="/admin">
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="border-[#003d7a]/30 text-[#001d3d] hover:bg-[#003d7a]/10 hover:border-[#003d7a]"
+                  >
                     Admin Panel
                   </Button>
                 </Link>
-                <Button onClick={signOut} variant="ghost" size="sm">
+                <Button 
+                  onClick={signOut} 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-[#001d3d]/70 hover:text-[#003d7a] hover:bg-[#003d7a]/5"
+                >
                   Keluar
                 </Button>
               </div>
             ) : (
               <Link href="/login">
-                <Button size="sm">
+                <Button 
+                  size="sm"
+                  className="bg-gradient-to-r from-[#003d7a] to-[#1a7aa0] hover:from-[#004d99] hover:to-[#2089b3] text-white shadow-lg shadow-[#003d7a]/30 hover:shadow-xl hover:shadow-[#003d7a]/40"
+                >
                   Login Admin
                 </Button>
               </Link>
@@ -130,25 +142,25 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-[#003d7a]/10 transition-colors"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
-              <X className="w-6 h-6 text-foreground" />
+              <X className="w-6 h-6 text-[#001d3d]" />
             ) : (
-              <Menu className="w-6 h-6 text-foreground" />
+              <Menu className="w-6 h-6 text-[#001d3d]" />
             )}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border bg-background/95 backdrop-blur-md">
+          <div className="md:hidden py-4 border-t border-[#003d7a]/20 bg-white/95 backdrop-blur-md">
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 link.dropdown ? (
                   <div key={link.label}>
-                    <p className="text-foreground/60 font-medium text-sm px-4 py-2">
+                    <p className="text-[#001d3d]/60 font-medium text-sm px-4 py-2">
                       {link.label}
                     </p>
                     <div className="pl-4">
@@ -157,7 +169,7 @@ export default function Navigation() {
                           key={item.href}
                           href={item.href}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="block text-foreground/80 hover:text-primary font-medium transition-colors px-4 py-2"
+                          className="block text-[#001d3d]/80 hover:text-[#003d7a] font-medium transition-colors px-4 py-2 hover:bg-[#003d7a]/5 rounded-lg"
                         >
                           {item.label}
                         </Link>
@@ -169,7 +181,7 @@ export default function Navigation() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-foreground/80 hover:text-primary font-medium transition-colors px-4 py-2"
+                    className="text-[#001d3d]/80 hover:text-[#003d7a] font-medium transition-colors px-4 py-2 hover:bg-[#003d7a]/5 rounded-lg"
                   >
                     {link.label}
                   </Link>
@@ -179,17 +191,29 @@ export default function Navigation() {
               {user ? (
                 <>
                   <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full border-[#003d7a]/30 text-[#001d3d] hover:bg-[#003d7a]/10"
+                    >
                       Admin Panel
                     </Button>
                   </Link>
-                  <Button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} variant="ghost" size="sm" className="w-full">
+                  <Button 
+                    onClick={() => { signOut(); setIsMobileMenuOpen(false); }} 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full text-[#001d3d]/70 hover:text-[#003d7a] hover:bg-[#003d7a]/5"
+                  >
                     Keluar
                   </Button>
                 </>
               ) : (
                 <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button size="sm" className="w-full">
+                  <Button 
+                    size="sm" 
+                    className="w-full bg-gradient-to-r from-[#003d7a] to-[#1a7aa0] hover:from-[#004d99] hover:to-[#2089b3] text-white"
+                  >
                     Login Admin
                   </Button>
                 </Link>
