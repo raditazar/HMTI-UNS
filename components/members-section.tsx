@@ -1,3 +1,7 @@
+import { FloatUp } from './animations/float-up';
+import { User } from 'lucide-react';
+import Image from 'next/image';
+
 export default function MembersSection() {
   const members = [
     {
@@ -24,45 +28,52 @@ export default function MembersSection() {
       role: 'Pengelola Keuangan',
       image: '/mahasiswa-kerja-sama-tim.jpg',
     },
-  ]
+  ];
 
   return (
     <section id="members" className="py-20 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <span className="text-primary font-semibold">PENGURUS</span>
-          <h2 className="text-4xl font-bold text-foreground mt-4 mb-4">
-            Keluarga Besar Kami
-          </h2>
-          <p className="text-foreground/70 text-lg max-w-2xl mx-auto">
-            Pengurus dan anggota yang berdedikasi untuk kesuksesan bersama
-          </p>
-        </div>
+        <FloatUp>
+          <div className="text-center mb-16">
+            <span className="text-primary font-semibold">PENGURUS</span>
+            <h2 className="text-4xl font-bold text-foreground mt-4 mb-4">
+              Keluarga Besar Kami
+            </h2>
+            <p className="text-foreground/70 text-lg max-w-2xl mx-auto">
+              Pengurus dan anggota yang berdedikasi untuk kesuksesan bersama
+            </p>
+          </div>
+        </FloatUp>
 
         {/* Members Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {members.map((member) => (
-            <div
-              key={member.id}
-              className="text-center group"
-            >
-              <div className="mb-4 overflow-hidden rounded-xl h-64">
-                <img
-                  src={member.image || "/placeholder.svg"}
-                  alt={member.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+          {members.map((member, index) => (
+            <FloatUp key={member.id} delay={index * 0.1}>
+              <div className="text-center group">
+                <div className="mb-4 overflow-hidden rounded-xl h-64 bg-muted relative">
+                  {member.image ? (
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <User className="w-20 h-20 text-muted-foreground/30" />
+                    </div>
+                  )}
+                </div>
+                <h3 className="text-lg font-bold text-foreground">
+                  {member.name}
+                </h3>
+                <p className="text-foreground/70 text-sm mt-1">
+                  {member.role}
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-foreground">
-                {member.name}
-              </h3>
-              <p className="text-foreground/70 text-sm mt-1">
-                {member.role}
-              </p>
-            </div>
+            </FloatUp>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }

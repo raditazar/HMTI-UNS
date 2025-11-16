@@ -1,124 +1,144 @@
 'use client'
 
-import { useState } from 'react'
-import { Menu, X, LogIn, Settings } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { Menu, X } from 'lucide-react'
+import { useAuth } from '@/lib/auth/auth-context'
+import { Button } from '@/components/ui/button'
 
 export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
-  const { user } = useAuth()
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { user, signOut } = useAuth()
 
-  const navItems = [
-    { label: 'Beranda', href: '#home' },
-    { label: 'Tentang', href: '#about' },
-    { label: 'Program Kerja', href: '/proker' },
-    { label: 'Organisasi', href: '/organisasi' },
-    { label: 'Keluarga Besar', href: '#members' },
-    { label: 'Kontak', href: '#contact' },
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const navLinks = [
+    { href: '/#home', label: 'Beranda' },
+    { href: '/#about', label: 'Tentang' },
+    { href: '/organisasi', label: 'Organisasi' },
+    { href: '/proker', label: 'Program Kerja' },
+    { href: '/#contact', label: 'Kontak' },
   ]
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">TI</span>
-          </div>
-          <span className="font-bold text-foreground hidden sm:inline">Himpunan TI UNS</span>
-        </div>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-background/95 backdrop-blur-md shadow-md'
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-12 h-12 transition-transform group-hover:scale-110">
+              <Image
+                src="/logo hmti.png"
+                alt="Logo HMTI UNS"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            <div className="hidden md:block">
+              <div className="font-bold text-lg text-foreground">HMTI UNS</div>
+              <div className="text-xs text-muted-foreground">Teknik Industri</div>
+            </div>
+          </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-1">
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        {/* Desktop CTA */}
-        <div className="hidden md:flex items-center gap-2">
-          {user ? (
-            <Link href="/admin">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                Admin Panel
-              </Button>
-            </Link>
-          ) : (
-            <>
-              <Link href="/login">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <LogIn className="w-4 h-4" />
-                  Login
-                </Button>
-              </Link>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                Bergabung
-              </Button>
-            </>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? (
-            <X className="w-6 h-6 text-foreground" />
-          ) : (
-            <Menu className="w-6 h-6 text-foreground" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden border-t border-border bg-background">
-          <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-foreground/80 hover:text-primary font-medium transition-colors relative group"
               >
-                {item.label}
-              </a>
-            ))}
-
-            {/* Mobile Login/Admin Button */}
-            {user ? (
-              <Link href="/admin" onClick={() => setIsOpen(false)}>
-                <Button className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2">
-                  <Settings className="w-4 h-4" />
-                  Admin Panel
-                </Button>
+                {link.label}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
               </Link>
-            ) : (
-              <>
-                <Link href="/login" onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" className="w-full mt-2 flex items-center justify-center gap-2">
-                    <LogIn className="w-4 h-4" />
-                    Login
+            ))}
+            
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Link href="/admin">
+                  <Button variant="outline" size="sm">
+                    Admin Panel
                   </Button>
                 </Link>
-                <Button className="w-full mt-2 bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Bergabung
+                <Button onClick={signOut} variant="ghost" size="sm">
+                  Keluar
                 </Button>
-              </>
+              </div>
+            ) : (
+              <Link href="/login">
+                <Button size="sm">
+                  Login Admin
+                </Button>
+              </Link>
             )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6 text-foreground" />
+            ) : (
+              <Menu className="w-6 h-6 text-foreground" />
+            )}
+          </button>
         </div>
-      )}
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-border bg-background/95 backdrop-blur-md">
+            <div className="flex flex-col gap-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-foreground/80 hover:text-primary font-medium transition-colors px-4 py-2"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              
+              {user ? (
+                <>
+                  <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full">
+                      Admin Panel
+                    </Button>
+                  </Link>
+                  <Button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} variant="ghost" size="sm" className="w-full">
+                    Keluar
+                  </Button>
+                </>
+              ) : (
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button size="sm" className="w-full">
+                    Login Admin
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </nav>
   )
 }
