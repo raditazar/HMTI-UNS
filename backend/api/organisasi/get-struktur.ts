@@ -47,8 +47,17 @@ export async function getStrukturOrganisasi(): Promise<{
       throw new Error(`Error fetching anggota: ${anggotaError.message}`);
     }
 
+    const kepalaBidangIds = new Set(
+      bidangList
+        .filter(b => b.kepala_bidang_id)
+        .map(b => b.kepala_bidang_id)
+    );
+
     // 4. Susun struktur hierarki
     const struktur: StrukturOrganisasi[] = bidangList.map((bidang: Bidang) => {
+      const kepalaBidang = (anggotaList || []).find(
+        (anggota: Anggota) => anggota.id === bidang.kepala_bidang_id
+      ) || null;
       // Filter divisi yang termasuk dalam bidang ini
       const divisiInBidang = (divisiList || []).filter(
         (divisi: Divisi) => divisi.bidang_id === bidang.id
@@ -57,7 +66,9 @@ export async function getStrukturOrganisasi(): Promise<{
       // Untuk setiap divisi, ambil anggotanya
       const divisiWithAnggota = divisiInBidang.map((divisi: Divisi) => {
         const anggotaInDivisi = (anggotaList || []).filter(
-          (anggota: Anggota) => anggota.divisi_id === divisi.id
+          (anggota: Anggota) => 
+            anggota.divisi_id === divisi.id &&
+            !kepalaBidangIds.has(anggota.id) // Filter kepala bidang
         );
 
         return {
@@ -68,6 +79,7 @@ export async function getStrukturOrganisasi(): Promise<{
 
       return {
         bidang,
+        kepala_bidang: kepalaBidang,
         divisi: divisiWithAnggota,
       };
     });
@@ -78,6 +90,49 @@ export async function getStrukturOrganisasi(): Promise<{
     };
   } catch (error) {
     console.error('Error in getStrukturOrganisasi:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
+}
+
+export async function getPengurusInti(): Promise<{
+  success: boolean;
+  data?: Anggota[];
+  error?: string;
+}> {
+  try {
+    // 1. Ambil semua ID kepala bidang
+    const { data: bidangList, error: bidangError } = await supabase
+      .from('bidang')
+      .select('kepala_bidang_id')
+      .not('kepala_bidang_id', 'is', null);
+
+    if (bidangError) {
+      throw new Error(`Error fetching bidang: ${bidangError.message}`);
+    }
+
+    const kepalaBidangIds = (bidangList || []).map(b => b.kepala_bidang_id);
+
+    // 2. Ambil pengurus inti, exclude kepala bidang
+    const { data, error } = await supabase
+      .from('anggota')
+      .select('*')
+      .is('divisi_id', null)
+      .not('id', 'in', `(${kepalaBidangIds.join(',')})`)
+      .order('urutan', { ascending: true });
+
+    if (error) {
+      throw new Error(`Error fetching pengurus inti: ${error.message}`);
+    }
+
+    return {
+      success: true,
+      data: data || [],
+    };
+  } catch (error) {
+    console.error('Error in getPengurusInti:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred',

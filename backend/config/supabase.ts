@@ -12,6 +12,7 @@ export interface Bidang {
   id: string;
   nama: string;
   deskripsi: string | null;
+  kepala_bidang_id: string | null;
   urutan: number;
   created_at: string;
   updated_at: string;
@@ -46,23 +47,37 @@ export interface Anggota {
 
 export interface StrukturOrganisasi {
   bidang: Bidang;
+  kepala_bidang: Anggota | null;
   divisi: (Divisi & {
     anggota: Anggota[];
   })[];
 }
 
-export interface Proker {
+export interface ProkerDivisi {
   id: string;
   nama: string;
   deskripsi: string | null;
-  divisi_id: string;
+  divisi_id: string | null;
   penanggung_jawab_id: string | null;
-  tanggal_mulai: string | null;
-  tanggal_selesai: string | null;
-  status: 'planned' | 'ongoing' | 'completed' | 'cancelled';
+  foto_url: string | null;
   urutan: number;
   created_at: string;
   updated_at: string;
   divisi?: Divisi;
   penanggung_jawab?: Anggota;
 }
+export interface ProkerBidang {
+  id: string;
+  nama: string;
+  deskripsi: string | null;
+  bidang_id: string | null;
+  penanggung_jawab_id: string | null;
+  foto_url: string | null;
+  urutan: number;
+  created_at: string;
+  updated_at: string;
+  bidang?: Bidang;
+  penanggung_jawab?: Anggota;
+}
+
+export type Proker = ProkerDivisi
